@@ -1,30 +1,54 @@
 package com.greatlearning.ds.Question2;
 
-
-
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Scanner;
 
 public class PairNodeSum {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Node root = new Node(14);
-
-		root.left = new Node(20);
-		root.left.left = new Node(10);
-		root.left.right = new Node(30);
 		
-		root.right = new Node(60);
-		root.right.left = new Node(50);
-		root.right.right = new Node(70);
+		Scanner scan = new Scanner(System.in);
+		ArrayList<Integer> inputNodeValues = new ArrayList<Integer>();
+		System.out.println("Enter Node values or Non-numeric string or character to to exit");
+			
+		while(scan.hasNextInt()) {
+			inputNodeValues.add(scan.nextInt());
+		}
+		if(!scan.hasNextInt()) {
+			String dummy = scan.next(); // just to hold the input value
+		}
 		
-		boolean pairFound = false;
-		int sum = 130;
+		// Display the values
+		System.out.print("\nNode Values : ");
+		for(int value : inputNodeValues) {
+			System.out.print(value + ", ");
+		}
 		
-		pairSum(root, 10);
+		// Sum value input 
+		System.out.print("\nEnter the Sum of Pair : ");
+		int sum = scan.nextInt();
+		scan.close();
 		
+		//int[] inputNodeValues = {40, 20, 10, 30, 60, 50, 70, 5, 15, 25, 35, 45, 55, 65, 75};
 		
+		Node root = null;
+		
+		for(int value : inputNodeValues) {
+			if(root == null) {
+				root = insert(root, value);
+			}
+			else {
+				insert(root, value);
+			}
+		}
+		
+		HashSet<Integer> set = new HashSet<Integer>();
+		if(!findPair(root, sum, set)) {
+			System.out.println("Nodes are not found.");
+		}
 	}
-	
+	 
 	
 	/**
 	 * if root node is null, set its value 
@@ -33,12 +57,12 @@ public class PairNodeSum {
 	 * @param value Node value
 	 * @return Node
 	 */
-	public Node insert(Node root, int value) {
+	public static Node insert(Node root, int value) {
 		
 		if(root == null) {
 			root = new Node(value);
 		}
-		else if(value < root.left.value) {
+		else if(value < root.value) {
 			root.left = insert(root.left, value);
 		}
 		else {
@@ -48,17 +72,31 @@ public class PairNodeSum {
 		return root;
 	}
 	
-	
-	public static void pairSum(Node node, int sum) {
+	/**
+	 * Return true if found the at least a pair and node values 
+	 * @param root is a Node
+	 * @param sum
+	 * @param set HashSet<Integer> to store the values
+	 * @return
+	 */
+	public static boolean findPair(Node root, int sum, HashSet<Integer> set) {
 		
-		if(node.right != null) {
-			System.out.println(node.value + " - " + node.right.value);
-			pairSum(node.right, sum);
+		if(root == null) {
+			return false;
 		}
+		
+		if(findPair(root.left, sum, set)) {
+			return true;
+		}
+		
+		if(set.contains(sum - root.value)) {
+			System.out.println("Pair is (" + (sum - root.value) + "," + root.value + ")" );
+			return true;
+		}
+		else {
+			set.add(root.value);
+		}
+		
+		return findPair(root.right, sum, set);
 	}
-	
-	
-
 }
-
-
